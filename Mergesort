@@ -1,0 +1,55 @@
+#include <iostream>
+using namespace std;
+
+void Merge(int a[], int first, int mid, int last, int temp[])
+{
+   int i = first, j = mid + 1;
+   int m = mid,   n = last;
+   int k = 0;
+
+   while (i <= m && j <= n)
+   {
+       if (a[i] <= a[j])
+           temp[k++] = a[i++];
+       else
+           temp[k++] = a[j++];
+   }
+
+   while (i <= m)
+       temp[k++] = a[i++];
+
+   while (j <= n)
+       temp[k++] = a[j++];
+
+   for (i = 0; i < k; i++)
+       a[first + i] = temp[i];
+}
+
+void mergesort(int a[], int first, int last, int temp[])
+{
+   if (first < last)
+   {
+     
+       int mid = (first + last) / 2;
+       
+       mergesort(a, first, mid, temp);    //序列化左 
+       
+       mergesort(a, mid + 1, last, temp); //序列化右 
+       
+       Merge(a, first, mid, last, temp); //合并 
+   }
+}
+
+
+
+
+int main()
+{
+    int a[]={4,8,1,2,6,7,3,5};
+    int length=sizeof(a)/sizeof(a[0]);
+    int temp[length];
+    mergesort(a,0,length-1,temp);
+    for(int i=0;i<length;i++)
+        cout<<a[i]<<" ";
+    return 0;
+}
