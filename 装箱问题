@@ -1,0 +1,74 @@
+//最优装载问题，时间复杂度为O(2^n)
+#include<iostream>
+#include<cstring>
+using namespace std;
+#define N 10
+int n;//n为集装箱的个数
+int c1;//船1的装载容量
+int c2;//船2的装载容量 
+int x[N];//存哪些节点存进树中了1，哪些节点没有存进去 0
+int w[N];//每个集装箱的重量
+int bestx[N]; 
+int cw;//现在已经计算出来的集装箱的和
+int bestcw=0;//最优解 
+void backtrack(int t,int c){
+	if(t>n){
+		if(cw>bestcw){
+			bestcw=cw;
+			for(int i=1;i<=n;i++){
+				bestx[i]=x[i];
+			}
+		}
+		else return;
+	}else{ 
+			if(cw+w[t]<=c){//搜索左子树 
+				cw+=w[t];
+				x[t]=1;
+				backtrack(t+1,c);
+				cw-=w[t]; //还原
+				x[t]=0;//返回上一层是两个都还原 
+			}else{
+				x[t]=0;
+			    backtrack(t+1,c);//搜索右子树
+			}
+	}
+}  
+int main(){
+	memset(x,0,sizeof(x));
+	memset(bestx,0,sizeof(bestx));
+	cout<<"请输入集装箱的个数："<<endl;
+	cin>>n;
+	cout<<"请输入第一艘船的最大载重量："<<endl;
+	cin>>c1; 
+	cout<<"请输入第二艘船的最大载重量："<<endl;
+	cin>>c2;
+	cout<<"请输入每个集装箱的重量："<<endl;
+	for(int i=1;i<=n;i++)
+		cin>>w[i]; 
+	cout<<"第一艘船上装的集装箱是："<<endl;
+	backtrack(1,c1);
+	for(int i=1;i<=n;i++)
+		if(bestx[i])
+			cout<<i<<" ";
+	cout<<endl; 
+	cout<<"第一艘船的最优载重量是：";
+	cout<<bestcw<<endl;
+	
+	bestcw=0;
+	for(int i=1;i<=n;i++){
+		if(!bestx[i]) 
+			bestcw+=w[i];
+	}
+	if(bestcw>c2){
+		cout<<"这艘船不能装下剩下的所有集装箱！"<<endl; 
+	}else{
+		cout<<"第二艘船上装的集装箱是：";
+		for(int i=1;i<=n;i++)
+			if(!bestx[i]) 
+				cout<<i<<" ";
+		cout<<endl;
+		cout<<"第二艘船的最优载重量是：";
+	    cout<<bestcw<<endl;
+	}
+	return 0;	
+} 
