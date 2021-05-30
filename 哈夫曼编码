@@ -1,0 +1,96 @@
+//哈夫曼编码  数组实现
+#include  <stdio.h>
+#include  <stdlib.h>
+ 
+typedef struct node{
+	char word;   //字符 
+	int weight;   //字符的权 
+	int left;       //左子女的下标 
+	int right;      //右子女的下标 
+	int parint;     //双亲结点的下标 
+	int *code;     //编码数组的首地址 
+}Huffnode;
+ 
+ 
+void CreatHuffmanTree(Huffnode *F,int n);      //函数声明 
+void CreatHuffmancode(Huffnode *F,int n); 
+void PrintHuffmancode(Huffnode *F,int n);
+ 
+int main (void){
+	Huffnode *F;
+	int n,w[4]={9,3,6,4};
+	char ch[4]={'A','B','C','D'};
+	printf("请输入：");
+	scanf("%d",&n); 
+	//创建森林
+	F=(Huffnode*)malloc((2*n-1)*sizeof(Huffnode));
+	for(int i=0;i<n;i++){
+		F[i].word=ch[i];
+		F[i].weight=w[i];
+		F[i].left=F[i].right=F[i].parint=-1;
+	}
+	//创建哈夫曼树
+	CreatHuffmanTree(F,n);
+	//创建 哈夫曼编码
+ 
+	CreatHuffmancode(F,n); 
+	//输出
+	PrintHuffmancode(F,n); 
+	free(F);
+}
+void CreatHuffmanTree(Huffnode *F,int n){	//创建哈夫曼树
+	int loop=0;
+	int k1,k2;//最小次小 
+	for(loop=0;loop<n-1;loop++){
+		for(k1=0;k1<n+loop&&F[k1].parint!=-1;k1++);   //找到第一个元素 
+		for(k2=k1+1;k2<n+loop&&F[k2].parint!=-1;k2++);          //找到第二个元素 
+		for(int i=k2;i<loop+n;i++){            //找到最小，次小 
+			if(F[i].parint==-1){
+				if(F[i].weight<F[k1].weight){
+					k2=k1;
+					k1=i;
+				}
+				else if(F[i].weight<F[k2].weight){
+					k2=i;
+				}	
+			}
+		}
+		F[n+loop].weight=F[k1].weight+F[k2].weight;
+		F[n+loop].left=k1;    //最小在左子女
+		F[n+loop].right=k2;         //次小在右子女
+		F[n+loop].parint=-1;
+		F[n+loop].word='X';
+		F[k1].parint=F[k2].parint=n+loop;
+	}
+}
+ 
+ 
+void CreatHuffmancode(Huffnode *F,int n){            //创建哈夫曼编码 
+	int c,pa;
+	int *p;
+	for(int i=0;i<n;i++){
+		F[i].code=p=(int*)malloc(n*sizeof(int));
+		p[0]=0;                    //p[0]用来充当岗哨 
+		c=i;
+		while(F[c].parint!=-1){             //当找到根结点时终止循环 
+			pa=F[c].parint;
+			if(c==F[pa].left){
+				p[++p[0]]=0;
+			}
+			else{
+				p[++p[0]]=1; 
+			}
+			c=pa;               //再找双亲的双亲 
+		}
+	}
+}
+ 
+void PrintHuffmancode(Huffnode *F,int n){
+	for(int j=0;j<n;j++){
+		printf("%c的编码是：",F[j].word);
+		for(int i=F[j].code[0];i>0;i--){                       //由子女找双亲，编的码，故倒着输出 
+			printf("%d",F[j].code[i]);
+		}
+		printf("\n");
+	}
+} 
