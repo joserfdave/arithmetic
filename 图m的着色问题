@@ -1,0 +1,77 @@
+#include <iostream> 
+#include <cstdio> 
+#include <fstream> 
+#include <algorithm> 
+#include <cmath> 
+#include <deque> 
+#include <vector> 
+#include <queue> 
+#include <string> 
+#include <cstring> 
+#include <map> 
+#include <stack> 
+#include <set> 
+
+using namespace std;
+int m;
+int pointnum;
+int edgenum;
+int sum = 0;
+int Graph[100][100];
+int x[100];
+void InPut()
+{
+    int pos1, pos2;
+    scanf("%d %d", &pointnum, &m);
+    scanf("%d", &edgenum);
+    memset(Graph, 0, sizeof(Graph));
+    for(int i = 1; i <= edgenum; ++i)
+    {
+        scanf("%d %d", &pos1, &pos2);
+        Graph[pos1][pos2] = Graph[pos2][pos1] = 1;
+    }
+}
+bool IsOk(int i)
+{
+    for(int j = 1; j < i; ++j)
+        if(Graph[i][j] == 1 && x[j] == x[i])
+            return false;
+    return true;
+}
+void BackTrack(int i)
+{
+    if(i > pointnum)
+    {
+        sum += 1;
+        printf("方法 %d : ", sum);
+        for(int j = 1; j <= pointnum; ++j)
+        {
+            printf("%d ", x[j]);
+        }
+        printf("\n");
+        return;
+    }
+    else
+    {
+        for(int j = 1; j <= m; ++j)
+        {
+            x[i] = j;
+            if(IsOk(i))
+                BackTrack(i + 1);
+            x[i] = 0;
+        }
+    }
+}
+void OutPut()
+{
+    printf("一共有 %d 中绘色方案", sum);
+}
+int main()
+{
+    InPut();
+    BackTrack(1);
+    OutPut();
+    if(sum == 0){
+    	printf("NO");
+	} 
+}
