@@ -1,0 +1,38 @@
+#include <iostream>
+#include <string.h>
+#include <algorithm>
+#include <cmath> 
+using namespace std;
+
+char a[2000], b[2000];
+int temp[2000][2000];
+int lena, lenb;
+
+int mins(int a, int b , int c){
+	return min(a,min(b,c));
+}
+
+int comp_change_del(){
+	for(int i=1; i<=lena; i++) temp[i][0] = i;
+     for(int j=1; j<=lenb; j++) temp[0][j] = j;
+     for(int i=1; i<=lena; i++)
+        for(int j=1; j<=lenb; j++)
+             if(a[i-1]==b[j-1])
+                temp[i][j] = temp[i-1][j-1];
+             else
+
+                temp[i][j] = mins(temp[i-1][j-1],temp[i][j-1],temp[i-1][j]) + 1;
+     cout << temp[lena][lenb] << endl;
+}
+
+ int main() {
+ 	cout << "请输入原串" << endl;
+	cin.getline(a,2000);
+	cout << "请输入目标串" << endl;
+	cin.getline(b,2000);
+	lena = strlen(a);
+    lenb = strlen(b);
+	cout << "最少需要变换: ";
+ 	comp_change_del();
+    return 0;
+ }
